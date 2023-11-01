@@ -1,0 +1,3 @@
+{
+  "extends": "@indocal/tsconfig/base.json"
+}

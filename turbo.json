@@ -1,0 +1,26 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": [
+    "NODE_ENV",
+    "PORT",
+    "DATABASE_URL",
+    "JWT_SECRET",
+    "NODEMAILER_*",
+    "ROOT_USER_*",
+    "NEXT_PUBLIC_*",
+    "NEXTAUTH_*",
+    "INDOCAL_API_TOKEN"
+  ],
+  "pipeline": {
+    "lint": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    }
+  }
+}

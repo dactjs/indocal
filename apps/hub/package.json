@@ -1,0 +1,34 @@
+{
+  "name": "@indocal/hub",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "lint": "next lint",
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@emotion/cache": "11.11.0",
+    "@emotion/react": "11.11.0",
+    "@emotion/styled": "11.11.0",
+    "@fontsource/roboto": "5.0.8",
+    "@indocal/theme": "workspace:*",
+    "@mui/icons-material": "5.14.15",
+    "@mui/material": "5.14.15",
+    "@qikform/core": "0.0.2",
+    "@qikform/mui": "0.0.2",
+    "next": "14.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@indocal/eslint-config-custom": "workspace:*",
+    "@indocal/tsconfig": "workspace:*",
+    "@next/eslint-plugin-next": "14.0.0",
+    "@types/node": "20.8.9",
+    "@types/react": "18.2.33",
+    "@types/react-dom": "18.2.14",
+    "typescript": "5.2.2"
+  }
+}
