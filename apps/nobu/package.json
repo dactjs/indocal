@@ -9,26 +9,35 @@
     "start": "next start"
   },
   "dependencies": {
+    "@casl/react": "3.1.0",
     "@emotion/cache": "11.11.0",
-    "@emotion/react": "11.11.0",
+    "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
-    "@fontsource/roboto": "5.0.8",
+    "@indocal/auth": "workspace:*",
+    "@indocal/schemas": "workspace:*",
     "@indocal/theme": "workspace:*",
-    "@mui/icons-material": "5.14.15",
-    "@mui/material": "5.14.15",
+    "@indocal/ui": "workspace:*",
+    "@mui/icons-material": "5.14.19",
+    "@mui/lab": "5.0.0-alpha.155",
+    "@mui/material": "5.14.20",
+    "@mui/x-charts": "6.18.3",
+    "@mui/x-data-grid": "6.18.3",
+    "@mui/x-date-pickers": "6.18.3",
     "@qikform/core": "0.0.2",
     "@qikform/mui": "0.0.2",
-    "next": "14.0.0",
+    "date-fns": "2.30.0",
+    "next": "14.0.3",
+    "next-auth": "4.24.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@indocal/eslint-config-custom": "workspace:*",
     "@indocal/tsconfig": "workspace:*",
-    "@next/eslint-plugin-next": "14.0.0",
-    "@types/node": "20.8.9",
-    "@types/react": "18.2.33",
-    "@types/react-dom": "18.2.14",
-    "typescript": "5.2.2"
+    "@next/eslint-plugin-next": "14.0.3",
+    "@types/node": "20.10.4",
+    "@types/react": "18.2.42",
+    "@types/react-dom": "18.2.17",
+    "typescript": "5.3.3"
   }
 }

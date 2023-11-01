@@ -7,9 +7,11 @@ import {
 import { ZodValidationPipe } from "@anatine/zod-nestjs";
 
 import { AuthModule } from "./auth";
+import { TicketsModule } from "./tickets";
+import { SuppliesModule } from "./supplies";
 
 @Module({
-  imports: [AuthModule, PrismaModule],
+  imports: [AuthModule, TicketsModule, SuppliesModule, PrismaModule],
   providers: [
     { provide: APP_PIPE, useClass: ZodValidationPipe },
     providePrismaClientExceptionFilter(),

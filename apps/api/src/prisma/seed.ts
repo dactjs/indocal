@@ -3,7 +3,7 @@ import * as bcrypt from "bcrypt";
 
 import { UserRole } from "@indocal/schemas";
 
-import { ENV } from "~/constants";
+import { ENV } from "../constants";
 
 const prisma = new PrismaClient();
 

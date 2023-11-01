@@ -1,15 +1,15 @@
 export const ENV = {
-  PORT: process.env.PORT as string,
-  DATABASE_URL: process.env.DATABASE_URL as string,
-  JWT_SECRET: process.env.JWT_SECRET as string,
-  NODEMAILER_SERVICE: process.env.NODEMAILER_SERVICE as string,
-  NODEMAILER_FROM: process.env.NODEMAILER_FROM as string,
-  NODEMAILER_AUTH_USER: process.env.NODEMAILER_AUTH_USER as string,
-  NODEMAILER_AUTH_PASSWORD: process.env.NODEMAILER_AUTH_PASSWORD as string,
-  ROOT_USER_USERNAME: process.env.ROOT_USER_USERNAME as string,
-  ROOT_USER_EMAIL: process.env.ROOT_USER_EMAIL as string,
-  ROOT_USER_NAME: process.env.ROOT_USER_NAME as string,
-  ROOT_USER_PASSWORD: process.env.ROOT_USER_PASSWORD as string,
+  PORT: String(process.env.PORT),
+  DATABASE_URL: String(process.env.DATABASE_URL),
+  JWT_SECRET: String(process.env.JWT_SECRET),
+  NODEMAILER_SERVICE: String(process.env.NODEMAILER_SERVICE),
+  NODEMAILER_FROM: String(process.env.NODEMAILER_FROM),
+  NODEMAILER_AUTH_USER: String(process.env.NODEMAILER_AUTH_USER),
+  NODEMAILER_AUTH_PASSWORD: String(process.env.NODEMAILER_AUTH_PASSWORD),
+  ROOT_USER_USERNAME: String(process.env.ROOT_USER_USERNAME),
+  ROOT_USER_EMAIL: String(process.env.ROOT_USER_EMAIL),
+  ROOT_USER_NAME: String(process.env.ROOT_USER_NAME),
+  ROOT_USER_PASSWORD: String(process.env.ROOT_USER_PASSWORD),
 } as const;
 
 const missing = Object.entries(ENV).some(([, value]) => !value);

@@ -17,17 +17,23 @@ export type CreateUserData = zod.infer<typeof CreateUserSchema>;
 
 export type UpdateUserData = zod.infer<typeof UpdateUserSchema>;
 
-export type FindOneUserQuery = zod.infer<typeof FindOneUserSchema>;
+export type FindUniqueUserQuery = zod.infer<typeof FindUniqueUserSchema>;
+
+export type AddUserGroupsToUserData = zod.infer<
+  typeof AddUserGroupsToUserSchema
+>;
+
+export type SetUserGroupsToUserData = zod.infer<
+  typeof SetUserGroupsToUserSchema
+>;
+
+export type RemoveUserGroupsToUserData = zod.infer<
+  typeof RemoveUserGroupsToUserSchema
+>;
 
 /////////////
 // Schemas //
 /////////////
-
-const GroupSchema = zod.object({
-  id: zod.string().uuid(),
-  name: zod.string().min(1),
-  description: zod.string().min(1).nullable(),
-});
 
 export const UserSchema = zod.object({
   id: zod.string().uuid(),
@@ -36,9 +42,9 @@ export const UserSchema = zod.object({
   name: zod.string().min(1),
   status: zod.enum(USER_STATUS_TUPLE),
   roles: zod.enum(USER_ROLE_TUPLE).array(),
-  groups: GroupSchema.array(),
   createdAt: zod.date().transform((date) => date.toISOString()),
   updatedAt: zod.date().transform((date) => date.toISOString()),
+  __caslSubjectType__: zod.literal("User").default("User"), // CASL Subject Type
 });
 
 export const CreateUserSchema = zod.object({
@@ -59,10 +65,22 @@ export const UpdateUserSchema = zod
   })
   .partial();
 
-export const FindOneUserSchema = zod
+export const FindUniqueUserSchema = zod
   .object({
     id: zod.string().uuid(),
     username: zod.string().min(1).regex(USERNAME_PATTERN),
     email: zod.string().email(),
   })
   .partial();
+
+export const AddUserGroupsToUserSchema = zod.object({
+  groups: zod.string().uuid().array(),
+});
+
+export const SetUserGroupsToUserSchema = zod.object({
+  groups: zod.string().uuid().array(),
+});
+
+export const RemoveUserGroupsToUserSchema = zod.object({
+  groups: zod.string().uuid().array(),
+});

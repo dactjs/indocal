@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
+import { Roboto } from "next/font/google";
 
 import { ThemeRegistry } from "@indocal/theme";
+
+const roboto = Roboto({
+  display: "swap",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+});
 
 export const metadata: Metadata = {
   title: "INDOCAL",
@@ -25,7 +28,7 @@ export default function RootLayout({
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </head>
 
-      <body>
+      <body className={roboto.className}>
         <ThemeRegistry options={{ key: "mui" }}>{children}</ThemeRegistry>
       </body>
     </html>

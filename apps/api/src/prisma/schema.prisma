@@ -51,6 +51,21 @@ model User {
 
   groups UserGroup[]
 
+  ticketsSent     Ticket[]        @relation("TicketsSent")
+  assignedTickets Ticket[]        @relation("AssignedTickets")
+  ticketComments  TicketComment[]
+
+  ticketTraces                  TicketTrace[]
+  destinationUserOnTicketTraces TicketTrace[] @relation("DestinationUserOnTicketTrace")
+  originUserOnTicketTraces      TicketTrace[] @relation("OriginUserOnTicketTrace")
+
+  assignedSupplies Supply[]
+  supplyComments   SupplyComment[]
+
+  supplyTraces                  SupplyTrace[]
+  destinationUserOnSupplyTraces SupplyTrace[] @relation("DestinationUserOnSupplyTrace")
+  originUserOnSupplyTraces      SupplyTrace[] @relation("OriginUserOnSupplyTrace")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -91,24 +106,162 @@ model UserGroup {
 // Nobu Management //
 /////////////////////
 
+model Ticket {
+  id       String  @id @default(uuid())
+  issue    String
+  solution String?
+
+  status TicketStatus @default(UNASSIGNED)
+
+  traces   TicketTrace[]
+  comments TicketComment[]
+
+  service   TicketService @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+  serviceId String
+
+  sentBy   User   @relation("TicketsSent", fields: [sentById], references: [id], onDelete: Restrict)
+  sentById String
+
+  assignedTo   User?   @relation("AssignedTickets", fields: [assignedToId], references: [id], onDelete: Restrict)
+  assignedToId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum TicketStatus {
+  UNASSIGNED
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+  CANCELLED
+}
+
+model TicketService {
+  id   String @id @default(uuid())
+  name String
+
+  tickets Ticket[]
+
+  category   TicketServiceCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, categoryId])
+}
+
+model TicketServiceCategory {
+  id   String @id @default(uuid())
+  name String @unique
+
+  services TicketService[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TicketComment {
+  id      String @id @default(uuid())
+  content String
+
+  writtenBy   User   @relation(fields: [writtenById], references: [id], onDelete: Restrict)
+  writtenById String
+
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TicketTrace {
+  id   String          @id @default(uuid())
+  type TicketTraceType
+
+  origin   User?   @relation("OriginUserOnTicketTrace", fields: [originId], references: [id])
+  originId String?
+
+  destination   User?   @relation("DestinationUserOnTicketTrace", fields: [destinationId], references: [id])
+  destinationId String?
+
+  madeBy   User   @relation(fields: [madeById], references: [id], onDelete: Restrict)
+  madeById String
+
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Restrict)
+  ticketId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum TicketTraceType {
+  RECEPTION
+  ASSIGNMENT
+  TRANSFER
+  OPENED
+  RESOLVED
+  CLOSED
+  CANCELLED
+}
+
 model Supply {
   id     String @id @default(uuid())
   brand  String
   model  String
   serial String @unique
 
-  movements SupplyMovement[]
+  traces   SupplyTrace[]
+  comments SupplyComment[]
+
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id], onDelete: Restrict)
+  assignedToId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model SupplyMovement {
-  id String @id @default(uuid())
+model SupplyComment {
+  id      String @id @default(uuid())
+  content String
+
+  writtenBy   User   @relation(fields: [writtenById], references: [id], onDelete: Restrict)
+  writtenById String
+
+  supply   Supply @relation(fields: [supplyId], references: [id], onDelete: Cascade)
+  supplyId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SupplyTrace {
+  id   String          @id @default(uuid())
+  type SupplyTraceType
+
+  origin   User?   @relation("OriginUserOnSupplyTrace", fields: [originId], references: [id])
+  originId String?
+
+  destination   User?   @relation("DestinationUserOnSupplyTrace", fields: [destinationId], references: [id])
+  destinationId String?
+
+  madeBy   User   @relation(fields: [madeById], references: [id], onDelete: Restrict)
+  madeById String
 
   supply   Supply @relation(fields: [supplyId], references: [id], onDelete: Restrict)
   supplyId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum SupplyTraceType {
+  INPUT
+  ASSIGNMENT
+  TRANSFER
+  UNASSIGNMENT
+  REPAIR
+  OUTPUT
 }

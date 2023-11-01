@@ -1,11 +1,5 @@
 import { z as zod } from "zod";
 
-import {
-  USERNAME_PATTERN,
-  USER_STATUS_TUPLE,
-  USER_ROLE_TUPLE,
-} from "../../constants";
-
 ///////////
 // Types //
 ///////////
@@ -16,28 +10,33 @@ export type CreateUserGroupData = zod.infer<typeof CreateUserGroupSchema>;
 
 export type UpdateUserGroupData = zod.infer<typeof UpdateUserGroupSchema>;
 
-export type FindOneUserGroupQuery = zod.infer<typeof FindOneUserGroupSchema>;
+export type FindUniqueUserGroupQuery = zod.infer<
+  typeof FindUniqueUserGroupSchema
+>;
+
+export type AddMembersToUserGroupData = zod.infer<
+  typeof AddMembersToUserGroupSchema
+>;
+
+export type SetMembersToUserGroupData = zod.infer<
+  typeof SetMembersToUserGroupSchema
+>;
+
+export type RemoveMembersToUserGroupData = zod.infer<
+  typeof RemoveMembersToUserGroupSchema
+>;
 
 /////////////
 // Schemas //
 /////////////
 
-const MemberSchema = zod.object({
-  id: zod.string().uuid(),
-  username: zod.string().min(1).regex(USERNAME_PATTERN),
-  email: zod.string().email(),
-  name: zod.string().min(1),
-  status: zod.enum(USER_STATUS_TUPLE),
-  roles: zod.enum(USER_ROLE_TUPLE).array(),
-});
-
 export const UserGroupSchema = zod.object({
   id: zod.string().uuid(),
   name: zod.string().min(1),
   description: zod.string().min(1).nullable(),
-  members: MemberSchema.array(),
   createdAt: zod.date().transform((date) => date.toISOString()),
   updatedAt: zod.date().transform((date) => date.toISOString()),
+  __caslSubjectType__: zod.literal("UserGroup").default("UserGroup"), // CASL Subject Type
 });
 
 export const CreateUserGroupSchema = zod.object({
@@ -50,14 +49,24 @@ export const UpdateUserGroupSchema = zod
   .object({
     name: zod.string().min(1),
     description: zod.string().min(1).nullable(),
-    members: zod.string().uuid().array(),
   })
   .partial();
 
-export const FindOneUserGroupSchema = zod
+export const FindUniqueUserGroupSchema = zod
   .object({
     id: zod.string().uuid(),
     name: zod.string().min(1),
-    description: zod.string().min(1),
   })
   .partial();
+
+export const AddMembersToUserGroupSchema = zod.object({
+  members: zod.string().uuid().array(),
+});
+
+export const SetMembersToUserGroupSchema = zod.object({
+  members: zod.string().uuid().array(),
+});
+
+export const RemoveMembersToUserGroupSchema = zod.object({
+  members: zod.string().uuid().array(),
+});

@@ -7,10 +7,10 @@ import type {
   ApiToken,
   CreateApiTokenData,
   UpdateApiTokenData,
-  FindOneApiTokenQuery,
+  FindUniqueApiTokenQuery,
   ApiTokenJwt,
 } from "@indocal/schemas";
-import { ApiTokenSchema, JwtType } from "@indocal/schemas";
+import { ApiTokenSchema, JwtType, ApiTokenStatus } from "@indocal/schemas";
 
 @Injectable()
 export class ApiTokensService {
@@ -28,6 +28,8 @@ export class ApiTokensService {
         id: uuid,
         name: data.name,
         description: data.description,
+        type: data.type,
+        status: ApiTokenStatus.ENABLED,
       },
     };
 
@@ -53,33 +55,20 @@ export class ApiTokensService {
   async findUnique({
     id,
     name,
-    description,
-  }: FindOneApiTokenQuery): Promise<ApiToken | null> {
+  }: FindUniqueApiTokenQuery): Promise<ApiToken | null> {
     const token = await this.prismaService.apiToken.findUnique({
-      where: { id, name, description },
-    });
-
-    return token ? ApiTokenSchema.parse(token) : null;
-  }
-
-  async findFirst({
-    id,
-    name,
-    description,
-  }: FindOneApiTokenQuery): Promise<ApiToken | null> {
-    const token = await this.prismaService.apiToken.findFirst({
-      where: { id, name, description },
+      where: { id, name },
     });
 
     return token ? ApiTokenSchema.parse(token) : null;
   }
 
   async update(
-    { id, name, description }: FindOneApiTokenQuery,
+    { id, name }: FindUniqueApiTokenQuery,
     data: UpdateApiTokenData
   ): Promise<ApiToken> {
     const token = await this.prismaService.apiToken.update({
-      where: { id, name, description },
+      where: { id, name },
       data: {
         name: data.name,
         description: data.description,
@@ -90,13 +79,9 @@ export class ApiTokensService {
     return ApiTokenSchema.parse(token);
   }
 
-  async delete({
-    id,
-    name,
-    description,
-  }: FindOneApiTokenQuery): Promise<ApiToken> {
+  async delete({ id, name }: FindUniqueApiTokenQuery): Promise<ApiToken> {
     const token = await this.prismaService.apiToken.delete({
-      where: { id, name, description },
+      where: { id, name },
     });
 
     return ApiTokenSchema.parse(token);

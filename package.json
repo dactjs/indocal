@@ -1,7 +1,6 @@
 {
   "name": "@indocal/monorepo",
-  "private": false,
-  "license": "MIT",
+  "private": true,
   "packageManager": "pnpm@8.6.10",
   "scripts": {
     "prepare": "husky install",
@@ -11,12 +10,12 @@
     "build": "turbo run build"
   },
   "devDependencies": {
-    "@commitlint/cli": "18.2.0",
-    "@commitlint/config-conventional": "18.1.0",
+    "@commitlint/cli": "18.4.3",
+    "@commitlint/config-conventional": "18.4.3",
     "@indocal/tsconfig": "workspace:*",
-    "eslint": "8.52.0",
+    "eslint": "8.55.0",
     "husky": "8.0.3",
-    "prettier": "3.0.3",
-    "turbo": "1.10.16"
+    "prettier": "3.1.0",
+    "turbo": "1.11.0"
   }
 }

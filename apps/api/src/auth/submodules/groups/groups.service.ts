@@ -3,11 +3,15 @@ import { PrismaService } from "nestjs-prisma";
 
 import type {
   UserGroup,
+  User,
   CreateUserGroupData,
   UpdateUserGroupData,
-  FindOneUserGroupQuery,
+  AddMembersToUserGroupData,
+  SetMembersToUserGroupData,
+  RemoveMembersToUserGroupData,
+  FindUniqueUserGroupQuery,
 } from "@indocal/schemas";
-import { UserGroupSchema } from "@indocal/schemas";
+import { UserGroupSchema, UserSchema } from "@indocal/schemas";
 
 @Injectable()
 export class UserGroupsService {
@@ -20,16 +24,13 @@ export class UserGroupsService {
         description: data.description,
         members: { connect: data.members.map((id) => ({ id })) },
       },
-      include: { members: { orderBy: { name: "asc" } } },
     });
 
     return UserGroupSchema.parse(group);
   }
 
   async findMany(): Promise<UserGroup[]> {
-    const groups = await this.prismaService.userGroup.findMany({
-      include: { members: { orderBy: { name: "asc" } } },
-    });
+    const groups = await this.prismaService.userGroup.findMany();
 
     return UserGroupSchema.array().parse(groups);
   }
@@ -37,59 +38,111 @@ export class UserGroupsService {
   async findUnique({
     id,
     name,
-    description,
-  }: FindOneUserGroupQuery): Promise<UserGroup | null> {
+  }: FindUniqueUserGroupQuery): Promise<UserGroup | null> {
     const group = await this.prismaService.userGroup.findUnique({
-      where: { id, name, description },
-      include: { members: { orderBy: { name: "asc" } } },
-    });
-
-    return group ? UserGroupSchema.parse(group) : null;
-  }
-
-  async findFirst({
-    id,
-    name,
-    description,
-  }: FindOneUserGroupQuery): Promise<UserGroup | null> {
-    const group = await this.prismaService.userGroup.findFirst({
-      where: { id, name, description },
-      include: { members: { orderBy: { name: "asc" } } },
+      where: { id, name },
     });
 
     return group ? UserGroupSchema.parse(group) : null;
   }
 
   async update(
-    { id, name, description }: FindOneUserGroupQuery,
+    { id, name }: FindUniqueUserGroupQuery,
     data: UpdateUserGroupData
   ): Promise<UserGroup> {
     const group = await this.prismaService.userGroup.update({
-      where: { id, name, description },
+      where: { id, name },
       data: {
         name: data.name,
         description: data.description,
-
-        ...(data.members && {
-          members: { set: data.members.map((id) => ({ id })) },
-        }),
       },
-      include: { members: { orderBy: { name: "asc" } } },
     });
 
     return UserGroupSchema.parse(group);
   }
 
-  async delete({
-    id,
-    name,
-    description,
-  }: FindOneUserGroupQuery): Promise<UserGroup> {
+  async delete({ id, name }: FindUniqueUserGroupQuery): Promise<UserGroup> {
     const group = await this.prismaService.userGroup.delete({
-      where: { id, name, description },
-      include: { members: { orderBy: { name: "asc" } } },
+      where: { id, name },
     });
 
     return UserGroupSchema.parse(group);
+  }
+
+  async addMembersToUserGroup({
+    data,
+    group,
+  }: {
+    data: AddMembersToUserGroupData;
+    group: FindUniqueUserGroupQuery;
+  }): Promise<User[]> {
+    const { members } = await this.prismaService.userGroup.update({
+      where: { id: group.id, name: group.name },
+      data: {
+        members: {
+          connect: data.members.map((member) => ({
+            id: member,
+          })),
+        },
+      },
+      include: { members: true },
+    });
+
+    return UserSchema.array().parse(members);
+  }
+
+  async findAllMembersForUserGroup({
+    id,
+    name,
+  }: FindUniqueUserGroupQuery): Promise<User[]> {
+    const members = await this.prismaService.user.findMany({
+      where: { groups: { some: { id, name } } },
+    });
+
+    return UserSchema.array().parse(members);
+  }
+
+  async setMembersToUserGroup({
+    data,
+    group,
+  }: {
+    data: SetMembersToUserGroupData;
+    group: FindUniqueUserGroupQuery;
+  }): Promise<User[]> {
+    const { members } = await this.prismaService.userGroup.update({
+      where: { id: group.id, name: group.name },
+      data: {
+        members: {
+          set: data.members.map((member) => ({
+            id: member,
+          })),
+        },
+      },
+      include: { members: true },
+    });
+
+    return UserSchema.array().parse(members);
+  }
+
+  async removeMembersToUserGroup({
+    data,
+    group,
+  }: {
+    data: RemoveMembersToUserGroupData;
+    group: FindUniqueUserGroupQuery;
+  }): Promise<User[]> {
+    const { members } = await this.prismaService.userGroup.update({
+      where: { id: group.id, name: group.name },
+      data: {
+        members: {
+          disconnect: data.members.map((member) => ({
+            id: member,
+          })),
+        },
+      },
+      include: { members: true },
+    });
+
+    return UserSchema.array().parse(members);
   }
 }

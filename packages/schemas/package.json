@@ -1,14 +1,13 @@
 {
   "name": "@indocal/schemas",
   "version": "0.0.0",
-  "private": false,
-  "license": "MIT",
+  "private": true,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "scripts": {
     "lint": "eslint .",
-    "dev": "pnpm run build -- --watch",
+    "dev": "tsup index.ts --format cjs,esm --dts --watch",
     "build": "tsup index.ts --format cjs,esm --dts"
   },
   "peerDependencies": {
@@ -17,8 +16,8 @@
   "devDependencies": {
     "@indocal/eslint-config-custom": "workspace:*",
     "@indocal/tsconfig": "workspace:*",
-    "@types/node": "20.8.9",
-    "tsup": "7.2.0",
-    "typescript": "5.2.2"
+    "@types/node": "20.10.4",
+    "tsup": "8.0.1",
+    "typescript": "5.3.3"
   }
 }

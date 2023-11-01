@@ -8,7 +8,7 @@ import {
   Body,
   ParseUUIDPipe,
 } from "@nestjs/common";
-import { ApiTags, ApiCreatedResponse } from "@nestjs/swagger";
+import { ApiTags, ApiBearerAuth, ApiCreatedResponse } from "@nestjs/swagger";
 
 import type { ApiToken } from "@indocal/schemas";
 
@@ -16,6 +16,7 @@ import { ApiTokensService } from "./api-tokens.service";
 import { ApiTokenDto, CreateApiTokenDto, UpdateApiTokenDto } from "./dto";
 
 @ApiTags("Api Tokens")
+@ApiBearerAuth()
 @Controller("api-tokens")
 export class ApiTokensController {
   constructor(private apiTokensService: ApiTokensService) {}
@@ -24,7 +25,7 @@ export class ApiTokensController {
   @ApiCreatedResponse({ type: ApiTokenDto })
   async create(
     @Body() createApiTokenDto: CreateApiTokenDto
-  ): Promise<ApiTokenDto> {
+  ): Promise<ApiToken> {
     const token = await this.apiTokensService.create({
       name: createApiTokenDto.name,
       description: createApiTokenDto.description,

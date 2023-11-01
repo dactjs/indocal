@@ -5,7 +5,7 @@ import { CreateUserSchema } from "@indocal/schemas";
 
 const schema = extendApi(CreateUserSchema, {
   title: "CreateUserData",
-  description: "A user of the application",
+  description: "Data for creating a user",
 });
 
 export class CreateUserDto extends createZodDto(schema) {}

@@ -4,11 +4,15 @@ import * as bcrypt from "bcrypt";
 
 import type {
   User,
+  UserGroup,
   CreateUserData,
   UpdateUserData,
-  FindOneUserQuery,
+  AddUserGroupsToUserData,
+  SetUserGroupsToUserData,
+  RemoveUserGroupsToUserData,
+  FindUniqueUserQuery,
 } from "@indocal/schemas";
-import { UserSchema } from "@indocal/schemas";
+import { UserSchema, UserGroupSchema } from "@indocal/schemas";
 
 @Injectable()
 export class UsersService {
@@ -26,16 +30,13 @@ export class UsersService {
         password: hash,
         roles: data.roles,
       },
-      include: { groups: { orderBy: { name: "asc" } } },
     });
 
     return UserSchema.parse(user);
   }
 
   async findMany(): Promise<User[]> {
-    const users = await this.prismaService.user.findMany({
-      include: { groups: { orderBy: { name: "asc" } } },
-    });
+    const users = await this.prismaService.user.findMany();
 
     return UserSchema.array().parse(users);
   }
@@ -44,30 +45,16 @@ export class UsersService {
     id,
     username,
     email,
-  }: FindOneUserQuery): Promise<User | null> {
+  }: FindUniqueUserQuery): Promise<User | null> {
     const user = await this.prismaService.user.findUnique({
       where: { id, username, email },
-      include: { groups: { orderBy: { name: "asc" } } },
-    });
-
-    return user ? UserSchema.parse(user) : null;
-  }
-
-  async findFirst({
-    id,
-    username,
-    email,
-  }: FindOneUserQuery): Promise<User | null> {
-    const user = await this.prismaService.user.findFirst({
-      where: { id, username, email },
-      include: { groups: { orderBy: { name: "asc" } } },
     });
 
     return user ? UserSchema.parse(user) : null;
   }
 
   async update(
-    { id, username, email }: FindOneUserQuery,
+    { id, username, email }: FindUniqueUserQuery,
     data: UpdateUserData
   ): Promise<User> {
     const user = await this.prismaService.user.update({
@@ -79,18 +66,94 @@ export class UsersService {
         status: data.status,
         roles: data.roles,
       },
-      include: { groups: { orderBy: { name: "asc" } } },
     });
 
     return UserSchema.parse(user);
   }
 
-  async delete({ id, username, email }: FindOneUserQuery): Promise<User> {
+  async delete({ id, username, email }: FindUniqueUserQuery): Promise<User> {
     const user = await this.prismaService.user.delete({
       where: { id, username, email },
-      include: { groups: { orderBy: { name: "asc" } } },
     });
 
     return UserSchema.parse(user);
+  }
+
+  async addUserGroupsToUser({
+    data,
+    user,
+  }: {
+    data: AddUserGroupsToUserData;
+    user: FindUniqueUserQuery;
+  }): Promise<UserGroup[]> {
+    const { groups } = await this.prismaService.user.update({
+      where: { id: user.id, email: user.email, username: user.username },
+      data: {
+        groups: {
+          connect: data.groups.map((group) => ({
+            id: group,
+          })),
+        },
+      },
+      include: { groups: true },
+    });
+
+    return UserGroupSchema.array().parse(groups);
+  }
+
+  async findAllUserGroupsForUser({
+    id,
+    email,
+    username,
+  }: FindUniqueUserQuery): Promise<UserGroup[]> {
+    const groups = await this.prismaService.userGroup.findMany({
+      where: { members: { some: { id, email, username } } },
+    });
+
+    return UserGroupSchema.array().parse(groups);
+  }
+
+  async setUserGroupsToUser({
+    data,
+    user,
+  }: {
+    data: SetUserGroupsToUserData;
+    user: FindUniqueUserQuery;
+  }): Promise<UserGroup[]> {
+    const { groups } = await this.prismaService.user.update({
+      where: { id: user.id, email: user.email, username: user.username },
+      data: {
+        groups: {
+          set: data.groups.map((group) => ({
+            id: group,
+          })),
+        },
+      },
+      include: { groups: true },
+    });
+
+    return UserGroupSchema.array().parse(groups);
+  }
+
+  async removeUserGroupsToUser({
+    data,
+    user,
+  }: {
+    data: RemoveUserGroupsToUserData;
+    user: FindUniqueUserQuery;
+  }): Promise<UserGroup[]> {
+    const { groups } = await this.prismaService.user.update({
+      where: { id: user.id, email: user.email, username: user.username },
+      data: {
+        groups: {
+          disconnect: data.groups.map((group) => ({
+            id: group,
+          })),
+        },
+      },
+      include: { groups: true },
+    });
+
+    return UserGroupSchema.array().parse(groups);
   }
 }

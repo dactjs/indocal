@@ -4,8 +4,8 @@ import { extendApi } from "@anatine/zod-openapi";
 import { CreateApiTokenSchema } from "@indocal/schemas";
 
 const schema = extendApi(CreateApiTokenSchema, {
-  title: "Api Token",
-  description: "A token for accessing the API",
+  title: "CreateApiTokenData",
+  description: "Data for creating an API token",
 });
 
 export class CreateApiTokenDto extends createZodDto(schema) {}

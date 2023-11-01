@@ -16,6 +16,7 @@ async function bootstrap(): Promise<void> {
     .setTitle("INDOCAL")
     .setDescription("The INDOCAL API description")
     .setVersion("1.0")
+    .addBearerAuth()
     .build();
 
   patchNestjsSwagger();
